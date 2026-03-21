@@ -17,6 +17,7 @@ model Profile {
   company     String?
   industry    Industry?
   contactLink String?
+  funFact     String?
   sessionKey  String    @unique
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

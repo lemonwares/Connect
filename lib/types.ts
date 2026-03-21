@@ -16,6 +16,7 @@ export type Industry =
 export interface Profile {
   id: string;
   name: string;
+  photo: string | null;
   phone: string | null;
   bio: string | null;
   city: string | null;
@@ -23,6 +24,7 @@ export interface Profile {
   company: string | null;
   industry: Industry | null;
   contactLink: string | null;
+  funFact?: string | null;
   createdAt: string;
 }
 

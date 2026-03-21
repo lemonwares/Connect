@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { withRetry } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
 export async function PUT(
@@ -13,14 +13,13 @@ export async function PUT(
     return Response.json({ error: "sessionKey required" }, { status: 401 });
   }
 
-  const profile = await prisma.profile.findUnique({ where: { id } });
-
+  const profile = await withRetry((db) => db.profile.findUnique({ where: { id } }));
   if (!profile) return Response.json({ error: "Not found" }, { status: 404 });
   if (profile.sessionKey !== sessionKey) {
     return Response.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const updated = await prisma.profile.update({ where: { id }, data });
+  const updated = await withRetry((db) => db.profile.update({ where: { id }, data }));
   return Response.json(updated);
 }
 
@@ -35,13 +34,12 @@ export async function DELETE(
     return Response.json({ error: "sessionKey required" }, { status: 401 });
   }
 
-  const profile = await prisma.profile.findUnique({ where: { id } });
-
+  const profile = await withRetry((db) => db.profile.findUnique({ where: { id } }));
   if (!profile) return Response.json({ error: "Not found" }, { status: 404 });
   if (profile.sessionKey !== sessionKey) {
     return Response.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  await prisma.profile.delete({ where: { id } });
+  await withRetry((db) => db.profile.delete({ where: { id } }));
   return Response.json({ success: true });
 }

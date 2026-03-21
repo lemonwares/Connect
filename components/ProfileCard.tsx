@@ -25,23 +25,33 @@ function nameToIndex(name: string): number {
   return hash % AVATAR_GRADIENTS.length;
 }
 
-function Avatar({ name, size = 96 }: { name: string; size?: number }) {
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+function Avatar({ name, photo, size = 96 }: { name: string; photo?: string | null; size?: number }) {
+  // photo may be prefixed with "blurred:" to indicate blur preference
+  const isBlurred = photo?.startsWith("blurred:");
+  const src = isBlurred ? photo!.slice("blurred:".length) : photo;
+
+  if (src) {
+    return (
+      <div
+        className="rounded-2xl shrink-0 ring-4 ring-white shadow-md overflow-hidden"
+        style={{ width: size, height: size }}
+      >
+        <img
+          src={src}
+          alt={name}
+          className="w-full h-full object-cover"
+          style={{ filter: isBlurred ? "blur(3px)" : "none", transform: isBlurred ? "scale(1.1)" : "none" }}
+        />
+      </div>
+    );
+  }
+
+  const initials = name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
   const [from, to] = AVATAR_GRADIENTS[nameToIndex(name)];
   return (
     <div
-      className="rounded-full flex items-center justify-center text-white font-bold font-red-hat shrink-0 ring-4 ring-white shadow-md"
-      style={{
-        width: size,
-        height: size,
-        fontSize: size * 0.33,
-        background: `linear-gradient(135deg, ${from}, ${to})`,
-      }}
+      className="rounded-2xl flex items-center justify-center text-white font-bold font-red-hat shrink-0 ring-4 ring-white shadow-md"
+      style={{ width: size, height: size, fontSize: size * 0.33, background: `linear-gradient(135deg, ${from}, ${to})` }}
     >
       {initials}
     </div>
@@ -57,7 +67,7 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
 
       {/* Top row: avatar + industry badge */}
       <div className="flex items-start justify-between">
-        <Avatar name={profile.name} size={96} />
+        <Avatar name={profile.name} photo={profile.photo} size={96} />
         {industryLabel && (
           <span className="text-xs font-bold tracking-widest uppercase text-slate-400 border border-slate-200 rounded-full px-4 py-1.5">
             {industryLabel}

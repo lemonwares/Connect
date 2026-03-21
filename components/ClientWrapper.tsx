@@ -16,7 +16,7 @@ export default function ClientWrapper({ initial, heroContent }: Props) {
   return (
     <>
       {/* Hero section */}
-      <section className="relative overflow-hidden bg-linear-to-br from-blue-900 via-blue-800 to-blue-600 text-white min-h-screen flex flex-col items-center justify-center">
+      <section className="relative overflow-hidden text-white min-h-screen flex flex-col items-center justify-center" style={{ background: "linear-gradient(135deg, #0e2240 0%, #0e2240 50%, #1b7a8c 100%)" }}>
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />

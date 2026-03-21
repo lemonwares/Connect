@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ConnectHub — Meet the people in the room",
+  title: "TEC Ikoyi — Meet the people in the room",
   description: "A church networking platform to discover and connect with people.",
 };
 

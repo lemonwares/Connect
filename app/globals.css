@@ -6,9 +6,9 @@
 }
 
 :root {
-  --blue-primary: #1d4ed8;
-  --blue-light: #3b82f6;
-  --blue-dark: #1e3a8a;
+  --brand-navy: #0e2240;
+  --brand-teal: #1b7a8c;
+  --brand-green: #b8d433;
 }
 
 * {
