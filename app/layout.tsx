@@ -17,6 +17,21 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "TEC Ikoyi — Meet the people in the room",
   description: "A church networking platform to discover and connect with people.",
+  icons: {
+    icon: "/TEC-Ikoyi-Logo-1.webp",
+    apple: "/TEC-Ikoyi-Logo-1.webp",
+  },
+  openGraph: {
+    title: "TEC Ikoyi — Meet the people in the room",
+    description: "Create your profile and connect with everyone here today.",
+    images: [{ url: "/TEC-Ikoyi-Logo-1.webp", width: 800, height: 400, alt: "The Elevation Church Ikoyi" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TEC Ikoyi — Meet the people in the room",
+    description: "Create your profile and connect with everyone here today.",
+    images: ["/TEC-Ikoyi-Logo-1.webp"],
+  },
 };
 
 export default function RootLayout({

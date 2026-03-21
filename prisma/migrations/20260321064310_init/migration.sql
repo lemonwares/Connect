@@ -13,6 +13,7 @@ CREATE TABLE "Profile" (
     "company" TEXT,
     "industry" "Industry",
     "contactLink" TEXT,
+    "funFact" TEXT,
     "sessionKey" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
