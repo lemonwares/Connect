@@ -97,8 +97,15 @@ export default function CreateProfileModal({ onCreated }: Props) {
 
   useEffect(() => {
     checkSession();
-    const id = setInterval(checkSession, 15000);
-    return () => clearInterval(id);
+    // Poll every 8s
+    const id = setInterval(checkSession, 8000);
+    // Also re-check whenever the user tabs back to the page
+    const onVisible = () => { if (document.visibilityState === "visible") checkSession(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [checkSession]);
 
   const [form, setForm] = useState({
