@@ -63,7 +63,7 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
   const jobLine = [profile.jobTitle, profile.company].filter(Boolean).join(", ");
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 w-full overflow-hidden" style={{ height: "520px" }}>
+    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 w-full overflow-hidden" style={{ minHeight: "560px" }}>
 
       {/* Top row: avatar + industry badge */}
       <div className="flex items-start justify-between shrink-0">
@@ -77,37 +77,69 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
 
       {/* Name + job */}
       <div className="flex flex-col gap-1 mt-4 shrink-0">
-        <h3 className="font-red-hat font-black text-3xl text-slate-900 leading-tight truncate">
+        <h3 className="font-red-hat font-black text-3xl text-slate-900 leading-tight">
           {profile.name}
         </h3>
         {jobLine && (
-          <p className="text-blue-600 text-base font-semibold truncate">{jobLine}</p>
+          <p className="text-blue-600 text-base font-semibold">{jobLine}</p>
         )}
       </div>
 
       {/* Bio + fun fact — flex-1 so footer is always visible */}
       <div className="flex flex-col gap-3 mt-4 flex-1 overflow-hidden">
         {profile.bio && (
-          <p className="text-slate-400 text-sm leading-relaxed wrap-break-word">
-            {profile.bio}
-          </p>
+          <p className="text-slate-400 text-sm leading-relaxed wrap-break-word">{profile.bio}</p>
         )}
         {profile.funFact && (
           <div className="flex items-start gap-2 bg-slate-50 rounded-xl px-3 py-2">
             <span className="text-sm shrink-0">💡</span>
-            <p className="text-slate-500 text-sm leading-relaxed wrap-break-word">{profile.funFact}</p>
+            <ul className="flex flex-col gap-1">
+              {profile.funFact.split(",").map((fact, i) => fact.trim() && (
+                <li key={i} className="text-slate-500 text-sm leading-relaxed flex items-start gap-1.5">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                  {fact.trim()}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {(profile.lookingFor || profile.genotype || profile.sex) && (
+          <div className="flex flex-wrap gap-2 mt-1">
+            {profile.lookingFor && (
+              <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: "#f0fdf4", color: "#15803d" }}>
+                🔍 {profile.lookingFor}
+              </span>
+            )}
+            {profile.genotype && (
+              <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-slate-100 text-slate-500">
+                {profile.genotype}
+              </span>
+            )}
+            {profile.sex && (
+              <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-slate-100 text-slate-500">
+                {profile.sex}
+              </span>
+            )}
           </div>
         )}
       </div>
 
       {/* Footer — always pinned at bottom */}
       <div className="flex flex-col gap-2 pt-4 border-t border-slate-100 shrink-0 mt-3">
-        {profile.city && (
+        {profile.area && (
           <div className="flex items-center gap-2 text-slate-400 text-sm">
             <svg className="w-4 h-4 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
-            <span className="truncate">{profile.city}</span>
+            <span>Lives in {profile.area}</span>
+          </div>
+        )}
+        {(profile.city || profile.stateOfOrigin) && (
+          <div className="flex items-center gap-2 text-slate-400 text-sm">
+            <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>From {[profile.city, profile.stateOfOrigin].filter(Boolean).join(", ")}</span>
           </div>
         )}
         {profile.phone && (
@@ -115,9 +147,7 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
             <svg className="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            <a href={`tel:${profile.phone}`} className="hover:text-blue-600 transition-colors truncate">
-              {profile.phone}
-            </a>
+            <a href={`tel:${profile.phone}`} className="hover:text-blue-600 transition-colors">{profile.phone}</a>
           </div>
         )}
       </div>

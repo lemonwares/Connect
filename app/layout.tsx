@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Red_Hat_Display, Inter, Great_Vibes } from "next/font/google";
+import { Red_Hat_Display, Inter, Playfair_Display, Lora } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -14,10 +14,11 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const greatVibes = Great_Vibes({
-  variable: "--font-great-vibes",
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -44,7 +45,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${redHatDisplay.variable} ${inter.variable} ${greatVibes.variable}`}>
+    <html lang="en" className={`${redHatDisplay.variable} ${inter.variable} ${lora.variable}`}>
       <body className="min-h-screen bg-slate-50 font-inter antialiased">
         {children}
         <Toaster position="top-center" richColors />

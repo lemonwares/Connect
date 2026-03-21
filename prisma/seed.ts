@@ -5,49 +5,28 @@ import "dotenv/config";
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
-const firstNames = ["James", "Amara", "David", "Sarah", "Chidi", "Grace", "Emmanuel", "Fatima", "Daniel", "Blessing", "Michael", "Ngozi", "Samuel", "Adaeze", "Joshua", "Chioma", "Elijah", "Miriam", "Isaac", "Deborah", "Aaron", "Esther", "Caleb", "Ruth", "Nathan", "Priscilla", "Solomon", "Abigail", "Gideon", "Lydia"];
-const lastNames = ["Okafor", "Chen", "Williams", "Jenkins", "Adeyemi", "Mensah", "Osei", "Nwosu", "Afolabi", "Diallo", "Owusu", "Balogun", "Eze", "Asante", "Musa", "Dike", "Onyeka", "Kamara", "Banda", "Okeke", "Traoré", "Abubakar", "Nkrumah", "Olawale", "Ihejirika", "Sow", "Conteh", "Achebe", "Obiora", "Fadahunsi"];
+const firstNames = ["James","Amara","David","Sarah","Chidi","Grace","Emmanuel","Fatima","Daniel","Blessing","Michael","Ngozi","Samuel","Adaeze","Joshua","Chioma","Elijah","Miriam","Isaac","Deborah","Aaron","Esther","Caleb","Ruth","Nathan","Priscilla","Solomon","Abigail","Gideon","Lydia"];
+const lastNames = ["Okafor","Chen","Williams","Jenkins","Adeyemi","Mensah","Osei","Nwosu","Afolabi","Diallo","Owusu","Balogun","Eze","Asante","Musa","Dike","Onyeka","Kamara","Banda","Okeke","Traoré","Abubakar","Nkrumah","Olawale","Ihejirika","Sow","Conteh","Achebe","Obiora","Fadahunsi"];
 
-const cities = [
-  "Ikoyi, Eti-Osa, Lagos State, Nigeria",
-  "Victoria Island, Eti-Osa, Lagos State, Nigeria",
-  "Lekki Phase 1, Eti-Osa, Lagos State, Nigeria",
-  "Ajah, Eti-Osa, Lagos State, Nigeria",
-  "Surulere, Surulere, Lagos State, Nigeria",
-  "Yaba, Lagos Mainland, Lagos State, Nigeria",
-  "Ikeja, Ikeja, Lagos State, Nigeria",
-  "Gbagada, Lagos Mainland, Lagos State, Nigeria",
-  "Magodo, Kosofe, Lagos State, Nigeria",
-  "Ojodu, Ojodu, Lagos State, Nigeria",
-  "Ago-Hausa, Ajeromi-Ifelodun, Lagos State, Nigeria",
-  "Festac Town, Amuwo-Odofin, Lagos State, Nigeria",
-  "Isale-Eko, Lagos Island, Lagos State, Nigeria",
-  "Maitama, Abuja Municipal, FCT, Nigeria",
-  "Wuse 2, Abuja Municipal, FCT, Nigeria",
-  "Garki, Abuja Municipal, FCT, Nigeria",
-  "GRA Phase 2, Port Harcourt, Rivers State, Nigeria",
-  "Trans-Amadi, Port Harcourt, Rivers State, Nigeria",
-  "Bodija, Ibadan North, Oyo State, Nigeria",
-  "Enugu GRA, Enugu North, Enugu State, Nigeria",
-];
+const industries: Industry[] = ["PASTOR","ENTREPRENEUR","DOCTOR","ENGINEER","LAWYER","EDUCATOR","FINANCE","TECH","CREATIVE","REAL_ESTATE","HEALTHCARE","MEDIA","OTHER"];
 
-const industries: Industry[] = ["PASTOR", "ENTREPRENEUR", "DOCTOR", "ENGINEER", "LAWYER", "EDUCATOR", "FINANCE", "TECH", "CREATIVE", "REAL_ESTATE", "HEALTHCARE", "MEDIA", "OTHER"];
 const jobTitles: Record<Industry, string[]> = {
-  PASTOR: ["Senior Pastor", "Associate Pastor", "Youth Pastor", "Worship Leader"],
-  ENTREPRENEUR: ["Founder & CEO", "Co-Founder", "Managing Director", "Business Owner"],
-  DOCTOR: ["Medical Doctor", "Consultant Physician", "Surgeon", "Pediatrician"],
-  ENGINEER: ["Software Engineer", "Civil Engineer", "Mechanical Engineer", "Electrical Engineer"],
-  LAWYER: ["Senior Advocate", "Corporate Lawyer", "Legal Counsel", "Barrister"],
-  EDUCATOR: ["Professor", "Lecturer", "School Principal", "Academic Director"],
-  FINANCE: ["CFO", "Investment Banker", "Financial Analyst", "Accountant"],
-  TECH: ["CTO", "Product Manager", "Data Scientist", "DevOps Engineer"],
-  CREATIVE: ["Creative Director", "Graphic Designer", "Art Director", "Photographer"],
-  REAL_ESTATE: ["Property Developer", "Real Estate Agent", "Estate Manager", "Architect"],
-  HEALTHCARE: ["Nurse Practitioner", "Pharmacist", "Public Health Officer", "Therapist"],
-  MEDIA: ["Journalist", "TV Presenter", "Content Creator", "Media Executive"],
-  OTHER: ["Consultant", "Project Manager", "Operations Lead", "Strategist"],
+  PASTOR: ["Senior Pastor","Associate Pastor","Youth Pastor","Worship Leader"],
+  ENTREPRENEUR: ["Founder & CEO","Co-Founder","Managing Director","Business Owner"],
+  DOCTOR: ["Medical Doctor","Consultant Physician","Surgeon","Pediatrician"],
+  ENGINEER: ["Software Engineer","Civil Engineer","Mechanical Engineer","Electrical Engineer"],
+  LAWYER: ["Senior Advocate","Corporate Lawyer","Legal Counsel","Barrister"],
+  EDUCATOR: ["Professor","Lecturer","School Principal","Academic Director"],
+  FINANCE: ["CFO","Investment Banker","Financial Analyst","Accountant"],
+  TECH: ["CTO","Product Manager","Data Scientist","DevOps Engineer"],
+  CREATIVE: ["Creative Director","Graphic Designer","Art Director","Photographer"],
+  REAL_ESTATE: ["Property Developer","Real Estate Agent","Estate Manager","Architect"],
+  HEALTHCARE: ["Nurse Practitioner","Pharmacist","Public Health Officer","Therapist"],
+  MEDIA: ["Journalist","TV Presenter","Content Creator","Media Executive"],
+  OTHER: ["Consultant","Project Manager","Operations Lead","Strategist"],
 };
-const companies = ["Stellar Horizon", "Grace & Co", "Lumina Studios", "Apex Ventures", "Kingdom Builders", "TechBridge Africa", "Covenant Group", "Pinnacle Health", "Zion Media", "Heritage Law", "Cornerstone Realty", "Elevate Finance", "Nexus Engineering", "Radiant Creative", "Providence Consulting"];
+
+const companies = ["Stellar Horizon","Grace & Co","Lumina Studios","Apex Ventures","Kingdom Builders","TechBridge Africa","Covenant Group","Pinnacle Health","Zion Media","Heritage Law","Cornerstone Realty","Elevate Finance","Nexus Engineering","Radiant Creative","Providence Consulting"];
 
 const bios = [
   "Passionate about building communities that last. Always looking to connect with purpose-driven people.",
@@ -63,22 +42,45 @@ const bios = [
 ];
 
 const funFacts = [
-  "I can speak three languages fluently.",
-  "I once cooked jollof rice for over 200 people at a community event.",
-  "I've read the Bible cover to cover four times.",
-  "I started my first business at age 16.",
-  "I hold a black belt in taekwondo.",
-  "I've visited 12 countries across 4 continents.",
-  "I can solve a Rubik's cube in under two minutes.",
-  "I once ran a half marathon with zero training.",
-  "I taught myself to code during a 3-month sabbatical.",
-  "I've been singing in a choir since I was 8 years old.",
-  "I once met a sitting president at a conference.",
-  "I bake sourdough bread every Sunday morning.",
-  "I have a twin sibling who works in a completely different field.",
-  "I wrote a children's book that was never published — yet.",
-  "I can name every country in Africa from memory.",
+  "Speaks 3 languages, Cooked jollof for 200+ people",
+  "Read the Bible 4x cover to cover, Sings in a choir",
+  "Started first business at 16, Visited 12 countries",
+  "Holds a black belt, Ran a half marathon untrained",
+  "Self-taught coder, Bakes sourdough every Sunday",
+  "Once met a sitting president, Has an unpublished book",
+  "Has a twin in a different field, Can name every African country",
+  "Solves Rubik's cube in 2 mins, Speaks Yoruba and Igbo",
+  "Played semi-pro football, Now runs a tech startup",
+  "Former choir director, Current real estate investor",
 ];
+
+// Nigerian states and sample LGAs/areas for seeding
+const stateLocations: { state: string; lga: string; area: string }[] = [
+  { state: "Lagos", lga: "Eti-Osa", area: "Ikoyi" },
+  { state: "Lagos", lga: "Eti-Osa", area: "Victoria Island" },
+  { state: "Lagos", lga: "Eti-Osa", area: "Lekki Phase 1" },
+  { state: "Lagos", lga: "Eti-Osa", area: "Ajah" },
+  { state: "Lagos", lga: "Surulere", area: "Surulere" },
+  { state: "Lagos", lga: "Lagos Mainland", area: "Yaba" },
+  { state: "Lagos", lga: "Ikeja", area: "GRA Ikeja" },
+  { state: "Lagos", lga: "Kosofe", area: "Magodo" },
+  { state: "Lagos", lga: "Ajeromi-Ifelodun", area: "Festac Town" },
+  { state: "Lagos", lga: "Lagos Island", area: "Isale-Eko" },
+  { state: "FCT", lga: "Municipal Area Council", area: "Maitama" },
+  { state: "FCT", lga: "Municipal Area Council", area: "Wuse 2" },
+  { state: "FCT", lga: "Bwari", area: "Gwarinpa" },
+  { state: "Rivers", lga: "Port Harcourt", area: "GRA Phase 2" },
+  { state: "Rivers", lga: "Port Harcourt", area: "Trans-Amadi" },
+  { state: "Oyo", lga: "Ibadan North", area: "Bodija" },
+  { state: "Oyo", lga: "Ibadan North", area: "Jericho" },
+  { state: "Enugu", lga: "Enugu North", area: "GRA" },
+  { state: "Anambra", lga: "Onitsha North", area: "Onitsha GRA" },
+  { state: "Delta", lga: "Oshimili South", area: "Asaba GRA" },
+];
+
+const sexOptions = ["Male", "Female"];
+const genotypeOptions = ["AA", "AS", "SS", "AC"];
+const lookingForOptions = ["Friendship","Networking","Mentorship","Business Partner","Community","Just connecting"];
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -100,6 +102,7 @@ async function main() {
     const industry = pick(industries);
     const jobTitle = pick(jobTitles[industry]);
     const company = pick(companies);
+    const location = pick(stateLocations);
 
     await prisma.profile.create({
       data: {
@@ -107,7 +110,12 @@ async function main() {
         phone: phone(),
         bio: pick(bios),
         funFact: pick(funFacts),
-        city: pick(cities),
+        city: location.lga,
+        stateOfOrigin: location.state,
+        area: location.area,
+        sex: pick(sexOptions),
+        genotype: pick(genotypeOptions),
+        lookingFor: pick(lookingForOptions),
         jobTitle,
         company,
         industry,

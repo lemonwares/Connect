@@ -15,6 +15,11 @@ export async function GET() {
         phone: true,
         bio: true,
         city: true,
+        stateOfOrigin: true,
+        area: true,
+        sex: true,
+        genotype: true,
+        lookingFor: true,
         jobTitle: true,
         company: true,
         industry: true,
@@ -29,7 +34,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { name, phone, bio, city, jobTitle, company, industry, contactLink, photo, funFact, sessionKey } = body;
+  const { name, phone, bio, city, stateOfOrigin, area, sex, genotype, lookingFor, jobTitle, company, industry, contactLink, photo, funFact, sessionKey } = body;
 
   if (!name || !sessionKey) {
     return Response.json({ error: "name and sessionKey are required" }, { status: 400 });
@@ -38,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const profile = await withRetry((db) =>
       db.profile.create({
-        data: { name, phone, bio, city, jobTitle, company, industry, contactLink, photo, funFact, sessionKey },
+        data: { name, phone, bio, city, stateOfOrigin, area, sex, genotype, lookingFor, jobTitle, company, industry, contactLink, photo, funFact, sessionKey },
       })
     );
     return Response.json(profile, { status: 201 });

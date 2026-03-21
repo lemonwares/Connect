@@ -12,6 +12,7 @@ async function getProfiles(): Promise<Profile[]> {
         orderBy: { createdAt: "desc" },
         select: {
           id: true, name: true, photo: true, phone: true, bio: true, city: true,
+          stateOfOrigin: true, area: true, sex: true, genotype: true, lookingFor: true,
           jobTitle: true, company: true, industry: true, contactLink: true, funFact: true, createdAt: true,
         },
       })
@@ -39,7 +40,7 @@ export default async function Home() {
           style={{ height: "auto" }}
         />
       </div>
-      <p className="text-2xl sm:text-3xl text-white -mt-2" style={{ fontFamily: "var(--font-great-vibes)", letterSpacing: "0.12em" }}>The Settled Community</p>
+      <p className="text-2xl sm:text-3xl text-white -mt-2" style={{ fontFamily: "var(--font-lora)", fontWeight: 600, fontStyle: "italic" }}>The Settled Community</p>
       <h1 className="font-red-hat font-black text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-tight">
         Meet someone
         <br />

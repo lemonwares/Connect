@@ -7,20 +7,25 @@ datasource db {
 }
 
 model Profile {
-  id          String    @id @default(cuid())
-  name        String
-  photo       String?
-  phone       String?
-  bio         String?
-  city        String?
-  jobTitle    String?
-  company     String?
-  industry    Industry?
-  contactLink String?
-  funFact     String?
-  sessionKey  String    @unique
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  photo         String?
+  phone         String?
+  bio           String?
+  city          String?
+  stateOfOrigin String?
+  area          String?
+  sex           String?
+  genotype      String?
+  lookingFor    String?
+  jobTitle      String?
+  company       String?
+  industry      Industry?
+  contactLink   String?
+  funFact       String?
+  sessionKey    String    @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 enum Industry {

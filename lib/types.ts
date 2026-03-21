@@ -20,6 +20,11 @@ export interface Profile {
   phone: string | null;
   bio: string | null;
   city: string | null;
+  stateOfOrigin: string | null;
+  area: string | null;
+  sex: string | null;
+  genotype: string | null;
+  lookingFor: string | null;
   jobTitle: string | null;
   company: string | null;
   industry: Industry | null;
