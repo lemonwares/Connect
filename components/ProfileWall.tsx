@@ -8,7 +8,7 @@ export interface ProfileWallHandle {
   refetch: () => Promise<void>;
 }
 
-const SPEED_PX_PER_S = 18; // px per second — slow, readable from a distance
+const SPEED_PX_PER_S = 8; // px per second — slow, readable from a distancee
 
 function ScrollTrack({
   count,
