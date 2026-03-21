@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Red_Hat_Display, Inter } from "next/font/google";
+import { Red_Hat_Display, Inter, Great_Vibes } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -12,6 +12,12 @@ const redHatDisplay = Red_Hat_Display({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const greatVibes = Great_Vibes({
+  variable: "--font-great-vibes",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -38,7 +44,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${redHatDisplay.variable} ${inter.variable}`}>
+    <html lang="en" className={`${redHatDisplay.variable} ${inter.variable} ${greatVibes.variable}`}>
       <body className="min-h-screen bg-slate-50 font-inter antialiased">
         {children}
         <Toaster position="top-center" richColors />

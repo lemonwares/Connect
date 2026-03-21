@@ -34,11 +34,12 @@ export default async function Home() {
         <Image
           src="/TEC-Ikoyi-Logo-1.webp"
           alt="The Elevation Church Ikoyi"
-          width={180}
-          height={80}
+          width={130}
+          height={58}
           style={{ height: "auto" }}
         />
       </div>
+      <p className="text-2xl sm:text-3xl text-white -mt-2" style={{ fontFamily: "var(--font-great-vibes)", letterSpacing: "0.12em" }}>The Settled Community</p>
       <h1 className="font-red-hat font-black text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-tight">
         Meet someone
         <br />
