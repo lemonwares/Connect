@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id          String    @id @default(cuid())
+  name        String
+  photo       String?
+  phone       String?
+  bio         String?
+  city        String?
+  jobTitle    String?
+  company     String?
+  industry    Industry?
+  contactLink String?
+  sessionKey  String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Industry {
+  PASTOR
+  ENTREPRENEUR
+  DOCTOR
+  ENGINEER
+  LAWYER
+  EDUCATOR
+  FINANCE
+  TECH
+  CREATIVE
+  REAL_ESTATE
+  HEALTHCARE
+  MEDIA
+  OTHER
+}

@@ -1,0 +1,46 @@
+import { prisma } from "@/lib/prisma";
+import { NextRequest } from "next/server";
+import { Prisma } from "@prisma/client";
+
+export async function GET() {
+  const profiles = await prisma.profile.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      bio: true,
+      city: true,
+      jobTitle: true,
+      company: true,
+      industry: true,
+      contactLink: true,
+      createdAt: true,
+    },
+  });
+  return Response.json(profiles);
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const { name, phone, bio, city, jobTitle, company, industry, contactLink, sessionKey } = body;
+
+  if (!name || !sessionKey) {
+    return Response.json({ error: "name and sessionKey are required" }, { status: 400 });
+  }
+
+  try {
+    const profile = await prisma.profile.create({
+      data: { name, phone, bio, city, jobTitle, company, industry, contactLink, sessionKey },
+    });
+    return Response.json(profile, { status: 201 });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return Response.json(
+        { error: "You already have a profile. You can only create one per session." },
+        { status: 409 }
+      );
+    }
+    throw err;
+  }
+}
