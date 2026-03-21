@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import { INDUSTRY_LABELS } from "@/lib/types";
 
@@ -72,9 +72,34 @@ export default function CreateProfileModal({ onCreated }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setHasProfile(!!localStorage.getItem("connecthub_session"));
+  // Check session validity — runs on mount and every 15s to detect admin deletions
+  const checkSession = useCallback(() => {
+    const sessionKey = localStorage.getItem("connecthub_session");
+    if (!sessionKey) {
+      setHasProfile(false);
+      return;
+    }
+    fetch("/api/profiles/session?key=" + encodeURIComponent(sessionKey))
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.exists) {
+          setHasProfile(true);
+        } else {
+          // Profile was deleted by admin — clear stale session
+          localStorage.removeItem("connecthub_session");
+          setHasProfile(false);
+        }
+      })
+      .catch(() => {
+        // Network error — keep current state to avoid false resets
+      });
   }, []);
+
+  useEffect(() => {
+    checkSession();
+    const id = setInterval(checkSession, 15000);
+    return () => clearInterval(id);
+  }, [checkSession]);
 
   const [form, setForm] = useState({
     name: "",

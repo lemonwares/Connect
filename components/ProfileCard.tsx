@@ -88,14 +88,14 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
       {/* Bio + fun fact — flex-1 so footer is always visible */}
       <div className="flex flex-col gap-3 mt-4 flex-1 overflow-hidden">
         {profile.bio && (
-          <p className="text-slate-400 text-sm leading-relaxed break-words">
+          <p className="text-slate-400 text-sm leading-relaxed wrap-break-word">
             {profile.bio}
           </p>
         )}
         {profile.funFact && (
           <div className="flex items-start gap-2 bg-slate-50 rounded-xl px-3 py-2">
             <span className="text-sm shrink-0">💡</span>
-            <p className="text-slate-500 text-sm leading-relaxed break-words">{profile.funFact}</p>
+            <p className="text-slate-500 text-sm leading-relaxed wrap-break-word">{profile.funFact}</p>
           </div>
         )}
       </div>
