@@ -291,7 +291,7 @@ export default function CreateProfileModal({ onCreated }: Props) {
                 </Field>
 
                 <Field label="City">
-                  <input name="city" value={form.city} onChange={handleChange} placeholder="Lagos, Nigeria" className={inputCls} />
+                  <input name="city" value={form.city} onChange={handleChange} placeholder="Ago-Hausa, Ajeromi-Ifelodun, Lagos State, Nigeria" className={inputCls} />
                 </Field>
 
                 <Field label="Job Title">
@@ -312,11 +312,8 @@ export default function CreateProfileModal({ onCreated }: Props) {
                 </Field>
 
                 <Field label="Bio / Tagline" span2>
-                  <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="A short line about yourself..." rows={2} className={`${inputCls} resize-none`} />
-                </Field>
-
-                <Field label="Contact Link (optional)" span2>
-                  <input name="contactLink" value={form.contactLink} onChange={handleChange} placeholder="https://linkedin.com/in/yourname" className={inputCls} />
+                  <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="A short line about yourself..." rows={2} maxLength={100} className={`${inputCls} resize-none`} />
+                  <p className={`text-xs mt-1 text-right ${form.bio.length > 85 ? "text-red-400" : "text-slate-400"}`}>{form.bio.length}/100</p>
                 </Field>
 
                 <Field label="Fun Fact" span2>
@@ -326,8 +323,10 @@ export default function CreateProfileModal({ onCreated }: Props) {
                     onChange={handleChange}
                     placeholder="Something interesting about you..."
                     rows={2}
+                    maxLength={30}
                     className={`${inputCls} resize-none`}
                   />
+                  <p className={`text-xs mt-1 text-right ${form.funFact.length > 24 ? "text-red-400" : "text-slate-400"}`}>{form.funFact.length}/30</p>
                 </Field>
               </div>
 

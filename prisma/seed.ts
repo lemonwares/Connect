@@ -7,7 +7,30 @@ const prisma = new PrismaClient({ adapter });
 
 const firstNames = ["James", "Amara", "David", "Sarah", "Chidi", "Grace", "Emmanuel", "Fatima", "Daniel", "Blessing", "Michael", "Ngozi", "Samuel", "Adaeze", "Joshua", "Chioma", "Elijah", "Miriam", "Isaac", "Deborah", "Aaron", "Esther", "Caleb", "Ruth", "Nathan", "Priscilla", "Solomon", "Abigail", "Gideon", "Lydia"];
 const lastNames = ["Okafor", "Chen", "Williams", "Jenkins", "Adeyemi", "Mensah", "Osei", "Nwosu", "Afolabi", "Diallo", "Owusu", "Balogun", "Eze", "Asante", "Musa", "Dike", "Onyeka", "Kamara", "Banda", "Okeke", "Traoré", "Abubakar", "Nkrumah", "Olawale", "Ihejirika", "Sow", "Conteh", "Achebe", "Obiora", "Fadahunsi"];
-const cities = ["Lagos, Nigeria", "Abuja, Nigeria", "Port Harcourt, Nigeria", "Ibadan, Nigeria", "Kano, Nigeria", "Enugu, Nigeria", "Accra, Ghana", "Nairobi, Kenya", "London, UK", "Houston, TX", "Atlanta, GA", "Toronto, Canada"];
+
+const cities = [
+  "Ikoyi, Eti-Osa, Lagos State, Nigeria",
+  "Victoria Island, Eti-Osa, Lagos State, Nigeria",
+  "Lekki Phase 1, Eti-Osa, Lagos State, Nigeria",
+  "Ajah, Eti-Osa, Lagos State, Nigeria",
+  "Surulere, Surulere, Lagos State, Nigeria",
+  "Yaba, Lagos Mainland, Lagos State, Nigeria",
+  "Ikeja, Ikeja, Lagos State, Nigeria",
+  "Gbagada, Lagos Mainland, Lagos State, Nigeria",
+  "Magodo, Kosofe, Lagos State, Nigeria",
+  "Ojodu, Ojodu, Lagos State, Nigeria",
+  "Ago-Hausa, Ajeromi-Ifelodun, Lagos State, Nigeria",
+  "Festac Town, Amuwo-Odofin, Lagos State, Nigeria",
+  "Isale-Eko, Lagos Island, Lagos State, Nigeria",
+  "Maitama, Abuja Municipal, FCT, Nigeria",
+  "Wuse 2, Abuja Municipal, FCT, Nigeria",
+  "Garki, Abuja Municipal, FCT, Nigeria",
+  "GRA Phase 2, Port Harcourt, Rivers State, Nigeria",
+  "Trans-Amadi, Port Harcourt, Rivers State, Nigeria",
+  "Bodija, Ibadan North, Oyo State, Nigeria",
+  "Enugu GRA, Enugu North, Enugu State, Nigeria",
+];
+
 const industries: Industry[] = ["PASTOR", "ENTREPRENEUR", "DOCTOR", "ENGINEER", "LAWYER", "EDUCATOR", "FINANCE", "TECH", "CREATIVE", "REAL_ESTATE", "HEALTHCARE", "MEDIA", "OTHER"];
 const jobTitles: Record<Industry, string[]> = {
   PASTOR: ["Senior Pastor", "Associate Pastor", "Youth Pastor", "Worship Leader"],
@@ -25,6 +48,7 @@ const jobTitles: Record<Industry, string[]> = {
   OTHER: ["Consultant", "Project Manager", "Operations Lead", "Strategist"],
 };
 const companies = ["Stellar Horizon", "Grace & Co", "Lumina Studios", "Apex Ventures", "Kingdom Builders", "TechBridge Africa", "Covenant Group", "Pinnacle Health", "Zion Media", "Heritage Law", "Cornerstone Realty", "Elevate Finance", "Nexus Engineering", "Radiant Creative", "Providence Consulting"];
+
 const bios = [
   "Passionate about building communities that last. Always looking to connect with purpose-driven people.",
   "Focused on creating impact through innovation and faith. Let's build something great together.",
@@ -38,6 +62,24 @@ const bios = [
   "Committed to excellence, driven by purpose, guided by faith.",
 ];
 
+const funFacts = [
+  "I can speak three languages fluently.",
+  "I once cooked jollof rice for over 200 people at a community event.",
+  "I've read the Bible cover to cover four times.",
+  "I started my first business at age 16.",
+  "I hold a black belt in taekwondo.",
+  "I've visited 12 countries across 4 continents.",
+  "I can solve a Rubik's cube in under two minutes.",
+  "I once ran a half marathon with zero training.",
+  "I taught myself to code during a 3-month sabbatical.",
+  "I've been singing in a choir since I was 8 years old.",
+  "I once met a sitting president at a conference.",
+  "I bake sourdough bread every Sunday morning.",
+  "I have a twin sibling who works in a completely different field.",
+  "I wrote a children's book that was never published — yet.",
+  "I can name every country in Africa from memory.",
+];
+
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -49,7 +91,6 @@ function phone(): string {
 async function main() {
   console.log("Seeding 50 profiles...");
 
-  // Clear existing seed data
   await prisma.profile.deleteMany({
     where: { sessionKey: { startsWith: "seed-" } },
   });
@@ -59,18 +100,17 @@ async function main() {
     const industry = pick(industries);
     const jobTitle = pick(jobTitles[industry]);
     const company = pick(companies);
-    const slug = name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z-]/g, "");
 
     await prisma.profile.create({
       data: {
         name,
         phone: phone(),
         bio: pick(bios),
+        funFact: pick(funFacts),
         city: pick(cities),
         jobTitle,
         company,
         industry,
-        contactLink: `https://linkedin.com/in/${slug}-${i}`,
         sessionKey: `seed-${i}-${Date.now()}`,
       },
     });

@@ -63,10 +63,10 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
   const jobLine = [profile.jobTitle, profile.company].filter(Boolean).join(", ");
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col gap-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 w-full h-full min-h-72">
+    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 w-full overflow-hidden" style={{ height: "520px" }}>
 
       {/* Top row: avatar + industry badge */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between shrink-0">
         <Avatar name={profile.name} photo={profile.photo} size={96} />
         {industryLabel && (
           <span className="text-xs font-bold tracking-widest uppercase text-slate-400 border border-slate-200 rounded-full px-4 py-1.5">
@@ -76,8 +76,8 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
       </div>
 
       {/* Name + job */}
-      <div className="flex flex-col gap-1 mt-1">
-        <h3 className="font-red-hat font-black text-3xl text-slate-900 leading-tight">
+      <div className="flex flex-col gap-1 mt-4 shrink-0">
+        <h3 className="font-red-hat font-black text-3xl text-slate-900 leading-tight truncate">
           {profile.name}
         </h3>
         {jobLine && (
@@ -85,21 +85,29 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
         )}
       </div>
 
-      {/* Bio */}
-      {profile.bio && (
-        <p className="text-slate-400 text-base leading-relaxed line-clamp-2 flex-1">
-          {profile.bio}
-        </p>
-      )}
+      {/* Bio + fun fact — flex-1 so footer is always visible */}
+      <div className="flex flex-col gap-3 mt-4 flex-1 overflow-hidden">
+        {profile.bio && (
+          <p className="text-slate-400 text-sm leading-relaxed break-words">
+            {profile.bio}
+          </p>
+        )}
+        {profile.funFact && (
+          <div className="flex items-start gap-2 bg-slate-50 rounded-xl px-3 py-2">
+            <span className="text-sm shrink-0">💡</span>
+            <p className="text-slate-500 text-sm leading-relaxed break-words">{profile.funFact}</p>
+          </div>
+        )}
+      </div>
 
-      {/* Footer */}
-      <div className="flex flex-col gap-2 pt-4 border-t border-slate-100 mt-auto">
+      {/* Footer — always pinned at bottom */}
+      <div className="flex flex-col gap-2 pt-4 border-t border-slate-100 shrink-0 mt-3">
         {profile.city && (
           <div className="flex items-center gap-2 text-slate-400 text-sm">
             <svg className="w-4 h-4 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
-            <span>{profile.city}</span>
+            <span className="truncate">{profile.city}</span>
           </div>
         )}
         {profile.phone && (
@@ -109,21 +117,6 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
             </svg>
             <a href={`tel:${profile.phone}`} className="hover:text-blue-600 transition-colors truncate">
               {profile.phone}
-            </a>
-          </div>
-        )}
-        {profile.contactLink && (
-          <div className="flex items-center gap-2 text-slate-500 text-sm">
-            <svg className="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-            <a
-              href={profile.contactLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600 transition-colors truncate"
-            >
-              {profile.contactLink.replace(/^https?:\/\/(www\.)?/, "")}
             </a>
           </div>
         )}

@@ -18,12 +18,12 @@ function ScrollTrack({
   children: React.ReactNode;
 }) {
   const [duration, setDuration] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     function calc() {
       const isMobile = window.innerWidth < 640;
       const vw = window.innerWidth;
-      // mobile: 1 card = 90vw, gap 16px | desktop: 1 card = 33.333vw - 2rem, gap 24px
       const cardPx = isMobile ? vw * 0.9 : (vw * 0.33333) - 32;
       const gapPx = isMobile ? 16 : 24;
       const oneSetPx = (cardPx + gapPx) * count;
@@ -39,7 +39,11 @@ function ScrollTrack({
   return (
     <div
       className="flex gap-4 sm:gap-6 w-max"
-      style={{ animation: `scroll-left ${duration}s linear infinite` }}
+      style={{ animation: `scroll-left ${duration}s linear infinite`, animationPlayState: paused ? "paused" : "running" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
     >
       {children}
     </div>
