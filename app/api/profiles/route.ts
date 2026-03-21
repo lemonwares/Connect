@@ -2,6 +2,8 @@ import { withRetry } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const profiles = await withRetry((db) =>
     db.profile.findMany({

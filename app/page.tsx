@@ -3,6 +3,8 @@ import ClientWrapper from "@/components/ClientWrapper";
 import { Profile } from "@/lib/types";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 async function getProfiles(): Promise<Profile[]> {
   try {
     const profiles = await withRetry((db) =>
