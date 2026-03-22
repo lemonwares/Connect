@@ -128,6 +128,45 @@ export default function CreateProfileModal({ onCreated }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Validate required fields and toast the first missing one
+    if (!form.name.trim()) {
+      toast.error("Full name is required");
+      return;
+    }
+    if (!form.phone.trim()) {
+      toast.error("Phone number is required");
+      return;
+    }
+    if (!form.sex) {
+      toast.error("Please select your sex");
+      return;
+    }
+    if (!form.jobTitle.trim()) {
+      toast.error("Job title is required");
+      return;
+    }
+    if (!form.industry) {
+      toast.error("Please select your industry");
+      return;
+    }
+    if (!form.lookingFor) {
+      toast.error("Please select what you're looking for");
+      return;
+    }
+    if (!residentialState) {
+      toast.error("Please select your residential state");
+      return;
+    }
+    if (!form.area) {
+      toast.error("Please select your area / neighbourhood");
+      return;
+    }
+    if (!form.funFact.trim()) {
+      toast.error("Fun fact is required");
+      return;
+    }
+
     if (globalSubmitting) return;
     globalSubmitting = true;
     setError(""); setLoading(true);
@@ -167,7 +206,6 @@ export default function CreateProfileModal({ onCreated }: Props) {
   }
 
   const lgas = selectedState ? (NIGERIA_STATES[selectedState] ?? []) : [];
-  const canSubmit = !!(form.name.trim() && form.phone.trim() && form.sex && form.industry && form.lookingFor && residentialState && form.area && form.jobTitle.trim() && form.funFact.trim());
 
   return (
     <>
@@ -250,11 +288,11 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   <p className={`text-xs mt-1 text-right ${form.name.length > 16 ? "text-red-400" : "text-slate-400"}`}>{form.name.length}/20</p>
                 </Field>
 
-                <Field label="Phone Number" required>
+                <Field label="Phone Number">
                   <input name="phone" value={form.phone} onChange={handleChange} placeholder="+234 800 000 0000" className={inputCls} />
                 </Field>
 
-                <Field label="Sex" required>
+                <Field label="Sex">
                   <select name="sex" value={form.sex} onChange={handleChange} className={inputCls}>
                     <option value="">Select</option>
                     {SEX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
@@ -289,7 +327,7 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   </select>
                 </Field>
 
-                <Field label="Residential State" required span2>
+                <Field label="Residential State" span2>
                   <select
                     value={residentialState}
                     onChange={e => {
@@ -303,14 +341,14 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   </select>
                 </Field>
 
-                <Field label="Area / Neighbourhood" required span2>
+                <Field label="Area / Neighbourhood" span2>
                   <select name="area" value={form.area} onChange={handleChange} className={inputCls} disabled={!residentialState}>
                     <option value="">{residentialState ? "Select your area" : "Select state first"}</option>
                     {(NIGERIA_AREAS[residentialState] ?? []).map(a => <option key={a} value={a}>{a}</option>)}
                   </select>
                 </Field>
 
-                <Field label="Job Title" required>
+                <Field label="Job Title">
                   <input name="jobTitle" value={form.jobTitle} onChange={handleChange} placeholder="Software Engineer" className={inputCls} />
                 </Field>
 
@@ -351,11 +389,11 @@ export default function CreateProfileModal({ onCreated }: Props) {
             <div className="px-6 py-4 border-t border-slate-100 bg-white">
               <button
                 type="submit"
-                disabled={loading || !canSubmit}
+                disabled={loading}
                 className="w-full disabled:opacity-50 disabled:cursor-not-allowed text-white font-red-hat font-semibold py-3 rounded-xl transition-colors cursor-pointer"
-                style={{ background: canSubmit ? "#0e2240" : "#94a3b8" }}
-                onMouseEnter={e => { if (canSubmit) e.currentTarget.style.background = "#1b7a8c"; }}
-                onMouseLeave={e => { if (canSubmit) e.currentTarget.style.background = "#0e2240"; }}
+                style={{ background: "#0e2240" }}
+                onMouseEnter={e => { e.currentTarget.style.background = "#1b7a8c"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "#0e2240"; }}
               >
                 {loading ? "Creating..." : "Join the Room"}
               </button>

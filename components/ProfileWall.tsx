@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useImperativeHandle, forwardRef } from "react";
+import { useEffect, useCallback, useState, useRef, useImperativeHandle, forwardRef } from "react";
 import { Profile } from "@/lib/types";
 import ProfileCard from "./ProfileCard";
 
@@ -8,92 +8,105 @@ export interface ProfileWallHandle {
   refetch: () => Promise<void>;
 }
 
-const SPEED_PX_PER_S = 8;
+const STYLE = `
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.mq-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.mq-track.playing {
+  animation: marquee linear infinite;
+}
+`;
 
-function ScrollTrack({ count, children }: { count: number; children: React.ReactNode }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number | null>(null);
-  const lastTimeRef = useRef<number | null>(null);
-  const pausedRef = useRef(false);
+function MarqueeTrack({ children, cardCount }: { children: React.ReactNode; cardCount: number }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
-  const scrollAtDragStart = useRef(0);
-  const [cardWidth, setCardWidth] = useState(0);
-  const [gap, setGap] = useState(0);
+  // offset in px we've manually shifted the track
+  const dragOffset = useRef(0);
+  // snapshot of translateX when drag started
+  const dragBaseX = useRef(0);
 
-  // Calculate one-set width for seamless loop reset
+  // duration: ~8px/s, so for N cards * ~380px each
+  const duration = Math.max(10, (cardCount * 380) / 40);
+
+  function getTranslateX(el: HTMLElement): number {
+    const style = window.getComputedStyle(el);
+    const mat = new DOMMatrix(style.transform);
+    return mat.m41; // translateX
+  }
+
+  function pause() {
+    const t = trackRef.current;
+    if (!t) return;
+    const tx = getTranslateX(t);
+    t.classList.remove("playing");
+    t.style.transform = `translateX(${tx}px)`;
+  }
+
+  function resume() {
+    const t = trackRef.current;
+    if (!t) return;
+    const tx = getTranslateX(t);
+    const halfWidth = t.scrollWidth / 2;
+    // normalise into 0..halfWidth
+    const pos = ((-tx % halfWidth) + halfWidth) % halfWidth;
+    const delay = -(pos / halfWidth) * duration;
+    t.style.transform = "";
+    t.style.animationDuration = `${duration}s`;
+    t.style.animationDelay = `${delay}s`;
+    t.classList.add("playing");
+  }
+
+  // start on mount
   useEffect(() => {
-    function calc() {
-      const isMobile = window.innerWidth < 640;
-      const vw = window.innerWidth;
-      setCardWidth(isMobile ? vw * 0.9 : (vw * 0.33333) - 32);
-      setGap(isMobile ? 16 : 24);
-    }
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, []);
-
-  // RAF auto-scroll loop
-  useEffect(() => {
-    if (!cardWidth || !count) return;
-    const oneSetPx = (cardWidth + gap) * count;
-
-    function tick(ts: number) {
-      if (!containerRef.current) { rafRef.current = requestAnimationFrame(tick); return; }
-      if (!pausedRef.current) {
-        const dt = lastTimeRef.current !== null ? (ts - lastTimeRef.current) / 1000 : 0;
-        lastTimeRef.current = ts;
-        containerRef.current.scrollLeft += SPEED_PX_PER_S * dt;
-        // Seamless loop: when we've scrolled one full set, jump back
-        if (containerRef.current.scrollLeft >= oneSetPx) {
-          containerRef.current.scrollLeft -= oneSetPx;
-        }
-      } else {
-        lastTimeRef.current = ts;
-      }
-      rafRef.current = requestAnimationFrame(tick);
-    }
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [cardWidth, gap, count]);
+    if (!trackRef.current) return;
+    trackRef.current.style.animationDuration = `${duration}s`;
+    trackRef.current.classList.add("playing");
+  }, [duration]);
 
   function onPointerDown(e: React.PointerEvent) {
-    if (!containerRef.current) return;
+    if (!wrapRef.current || !trackRef.current) return;
     isDragging.current = true;
-    pausedRef.current = true;
     dragStartX.current = e.clientX;
-    scrollAtDragStart.current = containerRef.current.scrollLeft;
-    containerRef.current.setPointerCapture(e.pointerId);
+    dragBaseX.current = getTranslateX(trackRef.current);
+    pause();
+    wrapRef.current.setPointerCapture(e.pointerId);
   }
 
   function onPointerMove(e: React.PointerEvent) {
-    if (!isDragging.current || !containerRef.current) return;
-    const dx = dragStartX.current - e.clientX;
-    containerRef.current.scrollLeft = scrollAtDragStart.current + dx;
+    if (!isDragging.current || !trackRef.current) return;
+    const dx = e.clientX - dragStartX.current;
+    const newX = dragBaseX.current + dx;
+    trackRef.current.style.transform = `translateX(${newX}px)`;
   }
 
   function onPointerUp() {
+    if (!isDragging.current) return;
     isDragging.current = false;
-    pausedRef.current = false;
+    resume();
   }
 
   return (
     <div
-      ref={containerRef}
-      className="overflow-x-scroll cursor-grab active:cursor-grabbing select-none"
-      style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
+      ref={wrapRef}
+      className="overflow-hidden select-none cursor-grab active:cursor-grabbing"
+      onMouseEnter={pause}
+      onMouseLeave={() => { if (!isDragging.current) resume(); }}
+      onTouchStart={pause}
+      onTouchEnd={() => { if (!isDragging.current) resume(); }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerLeave={onPointerUp}
-      onMouseEnter={() => { if (!isDragging.current) pausedRef.current = true; }}
-      onMouseLeave={() => { if (!isDragging.current) pausedRef.current = false; }}
-      onTouchStart={() => { pausedRef.current = true; }}
-      onTouchEnd={() => { pausedRef.current = false; }}
+      onPointerCancel={onPointerUp}
     >
-      <div className="flex gap-4 sm:gap-6 w-max">
+      <div ref={trackRef} className="mq-track">
         {children}
       </div>
     </div>
@@ -134,19 +147,20 @@ const ProfileWall = forwardRef<ProfileWallHandle, { initial: Profile[] }>(
       );
     }
 
-    // Enough copies so the loop never runs out of content
-    const copies = Math.max(3, Math.ceil(9 / profiles.length));
-    const looped = Array.from({ length: copies }, () => profiles).flat();
+    const copies = Math.max(2, Math.ceil(6 / profiles.length));
+    const set = Array.from({ length: copies }, () => profiles).flat();
+    const allCards = [...set, ...set]; // two halves for seamless -50% loop
 
     return (
       <div ref={sectionRef} className="relative py-4">
-        <ScrollTrack count={profiles.length}>
-          {looped.map((profile, i) => (
-            <div key={`${profile.id}-${i}`} className="w-[90vw] sm:w-[calc(33.333vw-2rem)] shrink-0">
+        <style>{STYLE}</style>
+        <MarqueeTrack cardCount={set.length}>
+          {allCards.map((profile, i) => (
+            <div key={`${profile.id}-${i}`} className="flex-none w-[90vw] sm:w-[calc(33.333vw-2rem)] px-2 sm:px-3">
               <ProfileCard profile={profile} />
             </div>
           ))}
-        </ScrollTrack>
+        </MarqueeTrack>
       </div>
     );
   }
