@@ -34,12 +34,12 @@ export interface Profile {
 }
 
 export const INDUSTRY_LABELS: Record<Industry, string> = {
-  PASTOR: "Pastor",
+  PASTOR: "Ministry",
   ENTREPRENEUR: "Entrepreneur",
-  DOCTOR: "Doctor",
-  ENGINEER: "Engineer",
-  LAWYER: "Lawyer",
-  EDUCATOR: "Educator",
+  DOCTOR: "Medical",
+  ENGINEER: "Engineering",
+  LAWYER: "Legal",
+  EDUCATOR: "Education",
   FINANCE: "Finance",
   TECH: "Tech",
   CREATIVE: "Creative",

@@ -302,7 +302,7 @@ export default function CreateProfileModal({ onCreated }: Props) {
                 <Field label="Industry / Role" span2>
                   <select name="industry" value={form.industry} onChange={handleChange} className={inputCls}>
                     <option value="">Select your industry</option>
-                    {Object.entries(INDUSTRY_LABELS).map(([key, label]) => (
+                    {Object.entries(INDUSTRY_LABELS).filter(([key]) => key !== "ENTREPRENEUR").map(([key, label]) => (
                       <option key={key} value={key}>{label}</option>
                     ))}
                   </select>
