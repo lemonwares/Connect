@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const profile = await withRetry((db) =>
       db.profile.create({
-        data: { name, phone, bio, city, stateOfOrigin, area, sex, genotype, lookingFor, jobTitle, company, industry, contactLink, photo, funFact, sessionKey },
+        data: { name, phone, bio, city, stateOfOrigin, area, sex, genotype, lookingFor, jobTitle, company, industry: industry || null, contactLink, photo, funFact, sessionKey },
       })
     );
     return Response.json(profile, { status: 201 });

@@ -105,7 +105,7 @@ export default function CreateProfileModal({ onCreated }: Props) {
 
   useEffect(() => {
     if (open) { dialogRef.current?.showModal(); document.body.style.overflow = "hidden"; }
-    else { dialogRef.current?.close(); document.body.style.overflow = ""; }
+    else { dialogRef.current?.close(); document.body.style.overflow = ""; setSubmitted(false); }
   }, [open]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
@@ -128,42 +128,11 @@ export default function CreateProfileModal({ onCreated }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitted(true);
 
-    // Validate required fields and toast the first missing one
-    if (!form.name.trim()) {
-      toast.error("Full name is required");
-      return;
-    }
-    if (!form.phone.trim()) {
-      toast.error("Phone number is required");
-      return;
-    }
-    if (!form.sex) {
-      toast.error("Please select your sex");
-      return;
-    }
-    if (!form.jobTitle.trim()) {
-      toast.error("Job title is required");
-      return;
-    }
-    if (!form.industry) {
-      toast.error("Please select your industry");
-      return;
-    }
-    if (!form.lookingFor) {
-      toast.error("Please select what you're looking for");
-      return;
-    }
-    if (!residentialState) {
-      toast.error("Please select your residential state");
-      return;
-    }
-    if (!form.area) {
-      toast.error("Please select your area / neighbourhood");
-      return;
-    }
-    if (!form.funFact.trim()) {
-      toast.error("Fun fact is required");
+    // Check all required fields
+    if (!form.name.trim() || !form.phone.trim() || !form.sex || !form.jobTitle.trim() ||
+        !form.lookingFor || !form.funFact.trim()) {
       return;
     }
 
@@ -205,7 +174,19 @@ export default function CreateProfileModal({ onCreated }: Props) {
     } finally { globalSubmitting = false; setLoading(false); }
   }
 
-  const lgas = selectedState ? (NIGERIA_STATES[selectedState] ?? []) : [];
+  const [submitted, setSubmitted] = useState(false);
+
+  const errors = submitted ? {
+    name: !form.name.trim() ? "Required" : "",
+    phone: !form.phone.trim() ? "Required" : "",
+    sex: !form.sex ? "Required" : "",
+    jobTitle: !form.jobTitle.trim() ? "Required" : "",
+    lookingFor: !form.lookingFor ? "Select at least one" : "",
+    funFact: !form.funFact.trim() ? "Required" : "",
+  } : {} as Record<string, string>;
+
+  const errCls = (key: string) =>
+    errors[key] ? "border-red-400 focus:border-red-400 focus:ring-red-300" : "";
 
   return (
     <>
@@ -284,19 +265,24 @@ export default function CreateProfileModal({ onCreated }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <Field label="Full Name" required span2>
-                  <input name="name" value={form.name} onChange={handleChange} required placeholder="John Doe" maxLength={20} className={inputCls} />
-                  <p className={`text-xs mt-1 text-right ${form.name.length > 16 ? "text-red-400" : "text-slate-400"}`}>{form.name.length}/20</p>
+                  <input name="name" value={form.name} onChange={handleChange} placeholder="John Doe" maxLength={20} className={`${inputCls} ${errCls("name")}`} />
+                  <div className="flex justify-between mt-1">
+                    {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+                    <p className={`text-xs ml-auto ${form.name.length > 16 ? "text-red-400" : "text-slate-400"}`}>{form.name.length}/20</p>
+                  </div>
                 </Field>
 
-                <Field label="Phone Number">
-                  <input name="phone" value={form.phone} onChange={handleChange} placeholder="+234 800 000 0000" className={inputCls} />
+                <Field label="Phone Number" required>
+                  <input name="phone" value={form.phone} onChange={handleChange} placeholder="+234 800 000 0000" className={`${inputCls} ${errCls("phone")}`} />
+                  {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                 </Field>
 
-                <Field label="Sex">
-                  <select name="sex" value={form.sex} onChange={handleChange} className={inputCls}>
+                <Field label="Sex" required>
+                  <select name="sex" value={form.sex} onChange={handleChange} className={`${inputCls} ${errCls("sex")}`}>
                     <option value="">Select</option>
                     {SEX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
                   </select>
+                  {errors.sex && <p className="text-xs text-red-500 mt-1">{errors.sex}</p>}
                 </Field>
 
                 <Field label="Genotype">
@@ -323,7 +309,7 @@ export default function CreateProfileModal({ onCreated }: Props) {
                 <Field label="LGA">
                   <select name="city" value={form.city} onChange={handleChange} className={inputCls} disabled={!selectedState}>
                     <option value="">{selectedState ? "Select LGA" : "Select state first"}</option>
-                    {lgas.map(l => <option key={l} value={l}>{l}</option>)}
+                    {(NIGERIA_STATES[selectedState] ?? []).map((l: string) => <option key={l} value={l}>{l}</option>)}
                   </select>
                 </Field>
 
@@ -348,28 +334,48 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   </select>
                 </Field>
 
-                <Field label="Job Title">
-                  <input name="jobTitle" value={form.jobTitle} onChange={handleChange} placeholder="Software Engineer" className={inputCls} />
+                <Field label="Job Title" required>
+                  <input name="jobTitle" value={form.jobTitle} onChange={handleChange} placeholder="Software Engineer" className={`${inputCls} ${errCls("jobTitle")}`} />
+                  {errors.jobTitle && <p className="text-xs text-red-500 mt-1">{errors.jobTitle}</p>}
                 </Field>
 
                 <Field label="Company">
                   <input name="company" value={form.company} onChange={handleChange} placeholder="Acme Inc." className={inputCls} />
                 </Field>
 
-                <Field label="Industry / Role" required span2>
+                <Field label="Industry / Role" span2>
                   <select name="industry" value={form.industry} onChange={handleChange} className={inputCls}>
                     <option value="">Select your industry</option>
                     {Object.entries(INDUSTRY_LABELS).map(([key, label]) => (
                       <option key={key} value={key}>{label}</option>
                     ))}
                   </select>
-                </Field>
+                  {errors.industry && <p className="text-xs text-red-500 mt-1">{errors.industry}</p>}                </Field>
 
                 <Field label="What are you looking for?" required span2>
-                  <select name="lookingFor" value={form.lookingFor} onChange={handleChange} className={inputCls}>
-                    <option value="">Select</option>
-                    {LOOKING_FOR_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                  </select>
+                  <div className={`w-full border rounded-xl px-3 pt-4 pb-3 bg-white flex flex-wrap gap-2 ${errors.lookingFor ? "border-red-400" : "border-slate-300"}`}>
+                    {LOOKING_FOR_OPTIONS.map(o => {
+                      const selected = form.lookingFor.split(",").map(s => s.trim()).filter(Boolean).includes(o);
+                      return (
+                        <button
+                          key={o}
+                          type="button"
+                          onClick={() => {
+                            const current = form.lookingFor.split(",").map(s => s.trim()).filter(Boolean);
+                            const next = selected ? current.filter(v => v !== o) : [...current, o];
+                            setForm(prev => ({ ...prev, lookingFor: next.join(", ") }));
+                          }}
+                          className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer"
+                          style={selected
+                            ? { background: "#0e2240", color: "white", borderColor: "#0e2240" }
+                            : { background: "white", color: "#64748b", borderColor: "#cbd5e1" }}
+                        >
+                          {o}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {errors.lookingFor && <p className="text-xs text-red-500 mt-1">{errors.lookingFor}</p>}
                 </Field>
 
                 <Field label="Bio / Tagline" span2>
@@ -378,8 +384,11 @@ export default function CreateProfileModal({ onCreated }: Props) {
                 </Field>
 
                 <Field label="Fun Fact" required span2>
-                  <textarea name="funFact" value={form.funFact} onChange={handleChange} placeholder="e.g. I speak 3 languages, I ran a marathon, I bake sourdough" rows={2} maxLength={120} className={`${inputCls} resize-none`} />
-                  <p className={`text-xs mt-1 text-right ${form.funFact.length > 100 ? "text-red-400" : "text-slate-400"}`}>{form.funFact.length}/120</p>
+                  <textarea name="funFact" value={form.funFact} onChange={handleChange} placeholder="e.g. I speak 3 languages, I ran a marathon, I bake sourdough" rows={2} maxLength={120} className={`${inputCls} resize-none ${errCls("funFact")}`} />
+                  <div className="flex justify-between mt-1">
+                    {errors.funFact && <p className="text-xs text-red-500">{errors.funFact}</p>}
+                    <p className={`text-xs ml-auto ${form.funFact.length > 100 ? "text-red-400" : "text-slate-400"}`}>{form.funFact.length}/120</p>
+                  </div>
                 </Field>
               </div>
 
