@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import { INDUSTRY_LABELS } from "@/lib/types";
-import { NIGERIA_STATES } from "@/lib/nigeria-lgas";
-import { NIGERIA_AREAS } from "@/lib/nigeria-areas";
 
 function generateSessionKey() {
   return crypto.randomUUID();
@@ -57,10 +55,8 @@ function compressImage(file: File): Promise<string> {
   });
 }
 
-const STATES = Object.keys(NIGERIA_STATES).sort();
 const GENOTYPES = ["AA", "AS", "SS", "AC", "SC"];
 const SEX_OPTIONS = ["Male", "Female"];
-const LOOKING_FOR_OPTIONS = ["Friendship", "Networking", "Mentorship", "Business Partner", "Community", "Just connecting"];
 
 interface Props { onCreated: () => void; }
 
@@ -72,8 +68,6 @@ export default function CreateProfileModal({ onCreated }: Props) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [blurPhoto, setBlurPhoto] = useState(false);
-  const [selectedState, setSelectedState] = useState(""); // for state of origin → LGA
-  const [residentialState, setResidentialState] = useState(""); // for current residence → area
   const dialogRef = useRef<HTMLDialogElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -163,8 +157,6 @@ export default function CreateProfileModal({ onCreated }: Props) {
 
       setOpen(false);
       setForm({ name: "", phone: "", bio: "", city: "", stateOfOrigin: "", sex: "", genotype: "", lookingFor: "", area: "", jobTitle: "", company: "", industry: "", contactLink: "", funFact: "" });
-      setSelectedState("");
-      setResidentialState("");
       removePhoto();
       toast.success("You're in the room!", { description: "Your profile is now live on the wall." });
       setHasProfile(true);
@@ -277,7 +269,7 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                 </Field>
 
-                <Field label="Sex" required>
+                <Field label="Gender" required>
                   <select name="sex" value={form.sex} onChange={handleChange} className={`${inputCls} ${errCls("sex")}`}>
                     <option value="">Select</option>
                     {SEX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
@@ -292,55 +284,19 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   </select>
                 </Field>
 
-                <Field label="State of Origin">
-                  <select
-                    value={selectedState}
-                    onChange={e => {
-                      setSelectedState(e.target.value);
-                      setForm(prev => ({ ...prev, stateOfOrigin: e.target.value, city: "" }));
-                    }}
+                <Field label="Residential Area / Neighbourhood" span2>
+                  <input
+                    name="area"
+                    value={form.area}
+                    onChange={handleChange}
+                    placeholder="e.g. Ikoyi, Lagos"
                     className={inputCls}
-                  >
-                    <option value="">Select state</option>
-                    {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </Field>
-
-                <Field label="LGA">
-                  <select name="city" value={form.city} onChange={handleChange} className={inputCls} disabled={!selectedState}>
-                    <option value="">{selectedState ? "Select LGA" : "Select state first"}</option>
-                    {(NIGERIA_STATES[selectedState] ?? []).map((l: string) => <option key={l} value={l}>{l}</option>)}
-                  </select>
-                </Field>
-
-                <Field label="Residential State" span2>
-                  <select
-                    value={residentialState}
-                    onChange={e => {
-                      setResidentialState(e.target.value);
-                      setForm(prev => ({ ...prev, area: "" }));
-                    }}
-                    className={inputCls}
-                  >
-                    <option value="">Where do you currently live?</option>
-                    {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </Field>
-
-                <Field label="Area / Neighbourhood" span2>
-                  <select name="area" value={form.area} onChange={handleChange} className={inputCls} disabled={!residentialState}>
-                    <option value="">{residentialState ? "Select your area" : "Select state first"}</option>
-                    {(NIGERIA_AREAS[residentialState] ?? []).map(a => <option key={a} value={a}>{a}</option>)}
-                  </select>
+                  />
                 </Field>
 
                 <Field label="Job Title" required>
                   <input name="jobTitle" value={form.jobTitle} onChange={handleChange} placeholder="Software Engineer" className={`${inputCls} ${errCls("jobTitle")}`} />
                   {errors.jobTitle && <p className="text-xs text-red-500 mt-1">{errors.jobTitle}</p>}
-                </Field>
-
-                <Field label="Company">
-                  <input name="company" value={form.company} onChange={handleChange} placeholder="Acme Inc." className={inputCls} />
                 </Field>
 
                 <Field label="Industry / Role" span2>
@@ -353,28 +309,14 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   {errors.industry && <p className="text-xs text-red-500 mt-1">{errors.industry}</p>}                </Field>
 
                 <Field label="What are you looking for?" required span2>
-                  <div className={`w-full border rounded-xl px-3 pt-4 pb-3 bg-white flex flex-wrap gap-2 ${errors.lookingFor ? "border-red-400" : "border-slate-300"}`}>
-                    {LOOKING_FOR_OPTIONS.map(o => {
-                      const selected = form.lookingFor.split(",").map(s => s.trim()).filter(Boolean).includes(o);
-                      return (
-                        <button
-                          key={o}
-                          type="button"
-                          onClick={() => {
-                            const current = form.lookingFor.split(",").map(s => s.trim()).filter(Boolean);
-                            const next = selected ? current.filter(v => v !== o) : [...current, o];
-                            setForm(prev => ({ ...prev, lookingFor: next.join(", ") }));
-                          }}
-                          className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer"
-                          style={selected
-                            ? { background: "#0e2240", color: "white", borderColor: "#0e2240" }
-                            : { background: "white", color: "#64748b", borderColor: "#cbd5e1" }}
-                        >
-                          {o}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <textarea
+                    name="lookingFor"
+                    value={form.lookingFor}
+                    onChange={handleChange}
+                    placeholder="e.g. Friendship, Networking, Business Partner..."
+                    rows={2}
+                    className={`${inputCls} resize-none ${errCls("lookingFor")}`}
+                  />
                   {errors.lookingFor && <p className="text-xs text-red-500 mt-1">{errors.lookingFor}</p>}
                 </Field>
 
@@ -383,12 +325,9 @@ export default function CreateProfileModal({ onCreated }: Props) {
                   <p className={`text-xs mt-1 text-right ${form.bio.length > 85 ? "text-red-400" : "text-slate-400"}`}>{form.bio.length}/100</p>
                 </Field>
 
-                <Field label="Fun Fact" required span2>
-                  <textarea name="funFact" value={form.funFact} onChange={handleChange} placeholder="e.g. I speak 3 languages, I ran a marathon, I bake sourdough" rows={2} maxLength={120} className={`${inputCls} resize-none ${errCls("funFact")}`} />
-                  <div className="flex justify-between mt-1">
-                    {errors.funFact && <p className="text-xs text-red-500">{errors.funFact}</p>}
-                    <p className={`text-xs ml-auto ${form.funFact.length > 100 ? "text-red-400" : "text-slate-400"}`}>{form.funFact.length}/120</p>
-                  </div>
+                <Field label="Fun Fact" span2>
+                  <textarea name="funFact" value={form.funFact} onChange={handleChange} placeholder="e.g. I speak 3 languages, I ran a marathon, I bake sourdough" rows={2} maxLength={120} className={`${inputCls} resize-none`} />
+                  <p className={`text-xs mt-1 text-right ${form.funFact.length > 100 ? "text-red-400" : "text-slate-400"}`}>{form.funFact.length}/120</p>
                 </Field>
               </div>
 

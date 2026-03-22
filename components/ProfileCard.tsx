@@ -60,7 +60,7 @@ function Avatar({ name, photo, size = 96 }: { name: string; photo?: string | nul
 
 export default function ProfileCard({ profile }: { profile: Profile }) {
   const industryLabel = profile.industry ? INDUSTRY_LABELS[profile.industry] : null;
-  const jobLine = [profile.jobTitle, profile.company].filter(Boolean).join(", ");
+  const jobLine = profile.jobTitle || null;
 
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 w-full overflow-hidden" style={{ minHeight: "560px" }}>
@@ -132,14 +132,6 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
             <span>Lives in {profile.area}</span>
-          </div>
-        )}
-        {(profile.city || profile.stateOfOrigin) && (
-          <div className="flex items-center gap-2 text-slate-400 text-sm">
-            <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span>From {[profile.city, profile.stateOfOrigin].filter(Boolean).join(", ")}</span>
           </div>
         )}
         {profile.phone && (

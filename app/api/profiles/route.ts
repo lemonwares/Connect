@@ -4,28 +4,21 @@ import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
+  const limit = Math.min(100, parseInt(searchParams.get("limit") ?? "1000"));
+  const skip = (page - 1) * limit;
+
   const profiles = await withRetry((db) =>
     db.profile.findMany({
       orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
       select: {
-        id: true,
-        name: true,
-        photo: true,
-        phone: true,
-        bio: true,
-        city: true,
-        stateOfOrigin: true,
-        area: true,
-        sex: true,
-        genotype: true,
-        lookingFor: true,
-        jobTitle: true,
-        company: true,
-        industry: true,
-        contactLink: true,
-        funFact: true,
-        createdAt: true,
+        id: true, name: true, photo: true, phone: true, bio: true, city: true,
+        stateOfOrigin: true, area: true, sex: true, genotype: true, lookingFor: true,
+        jobTitle: true, company: true, industry: true, contactLink: true, funFact: true, createdAt: true,
       },
     })
   );
