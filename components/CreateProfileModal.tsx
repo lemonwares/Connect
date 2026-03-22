@@ -306,7 +306,16 @@ export default function CreateProfileModal({ onCreated }: Props) {
                       <option key={key} value={key}>{label}</option>
                     ))}
                   </select>
-                  {errors.industry && <p className="text-xs text-red-500 mt-1">{errors.industry}</p>}                </Field>
+                  {form.industry === "OTHER" && (
+                    <input
+                      name="contactLink"
+                      value={form.contactLink}
+                      onChange={handleChange}
+                      placeholder="Please specify your industry..."
+                      className={`${inputCls} mt-2`}
+                    />
+                  )}
+                </Field>
 
                 <Field label="What are you looking for?" required span2>
                   <textarea

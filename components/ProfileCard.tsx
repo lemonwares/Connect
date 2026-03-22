@@ -59,7 +59,9 @@ function Avatar({ name, photo, size = 96 }: { name: string; photo?: string | nul
 }
 
 export default function ProfileCard({ profile }: { profile: Profile }) {
-  const industryLabel = profile.industry ? INDUSTRY_LABELS[profile.industry] : null;
+  const industryLabel = profile.industry === "OTHER" && profile.contactLink
+    ? profile.contactLink
+    : profile.industry ? INDUSTRY_LABELS[profile.industry] : null;
   const jobLine = profile.jobTitle || null;
 
   return (
